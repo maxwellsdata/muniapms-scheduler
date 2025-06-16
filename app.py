@@ -12,10 +12,10 @@ st.set_page_config(
     page_title="MuniAPMs Task Scheduler",
     page_icon="📅",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for MuniAPMs branding
+# Custom CSS for MuniAPMs branding and improved contrast
 st.markdown("""
 <style>
     .main-header {
@@ -45,7 +45,7 @@ st.markdown("""
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 5px;
-        color: #1a365d;
+        color: #1a365d !important;
         font-weight: 500;
     }
     
@@ -55,7 +55,7 @@ st.markdown("""
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 5px;
-        color: #742a2a;
+        color: #742a2a !important;
         font-weight: 500;
     }
     
@@ -65,7 +65,7 @@ st.markdown("""
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 5px;
-        color: #22543d;
+        color: #22543d !important;
         font-weight: 500;
     }
     
@@ -101,17 +101,22 @@ st.markdown("""
         text-align: center;
     }
     
-    /* Center text in all dataframe tables */
+    /* Center text in all dataframe tables and ensure proper contrast */
     .stDataFrame > div > div > div > div > table {
         text-align: center;
     }
     
     .stDataFrame > div > div > div > div > table td {
         text-align: center !important;
+        color: #1a202c !important;
+        font-weight: 500 !important;
     }
     
     .stDataFrame > div > div > div > div > table th {
         text-align: center !important;
+        color: #1a202c !important;
+        font-weight: 600 !important;
+        background-color: #f8f9fa !important;
     }
     
     /* Additional styling for better table appearance */
@@ -121,8 +126,21 @@ st.markdown("""
         border: 2px solid #00BFFF;
     }
     
+    /* CRITICAL: Fix team member name visibility in tables */
+    .stDataFrame table tbody tr td {
+        color: #1a202c !important;
+        font-weight: 600 !important;
+        background-color: white !important;
+    }
+    
+    .stDataFrame table thead tr th {
+        color: #1a202c !important;
+        font-weight: 700 !important;
+        background-color: #f8f9fa !important;
+    }
+    
     /* Ensure all text elements have proper contrast */
-    .stMarkdown, .stText {
+    .stMarkdown, .stText, p, span, div {
         color: #1a202c !important;
     }
     
@@ -134,6 +152,7 @@ st.markdown("""
     
     .stMultiSelect > div > div > div > div {
         color: #1a202c !important;
+        font-weight: 500 !important;
     }
     
     /* Ensure selectbox text is readable */
@@ -142,37 +161,68 @@ st.markdown("""
         color: #1a202c !important;
     }
     
-    /* Fix any potential white text on white background issues */
-    .stSelectbox label, .stMultiSelect label {
+    /* Fix form labels and ensure high contrast */
+    .stSelectbox label, .stMultiSelect label, label {
         color: #1a202c !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
     }
     
-    /* Improve sidebar text contrast */
-    .css-1d391kg, .css-1d391kg p {
-        color: #1a202c !important;
-    }
-    
-    /* Ensure all form labels are visible */
-    label {
-        color: #1a202c !important;
-        font-weight: 600 !important;
+    /* Ensure team member names in form sections are highly visible */
+    .stMarkdown strong, strong {
+        color: #000080 !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
     }
     
     /* Fix any remaining text visibility issues */
     .stApp > div > div > div > div {
-        color: #1a202c;
-    }
-    
-    /* Ensure proper contrast for all text elements */
-    p, span, div {
-        color: inherit;
+        color: #1a202c !important;
     }
     
     /* Make sure instruction text is clearly visible */
     .stMarkdown p {
         color: #1a202c !important;
         line-height: 1.6;
+        font-weight: 500 !important;
+    }
+    
+    /* Ensure metric labels are visible */
+    .metric-container label {
+        color: #1a202c !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Fix tab text visibility */
+    .stTabs [data-baseweb="tab-list"] button {
+        color: #1a202c !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Ensure download button text is visible */
+    .stDownloadButton > button {
+        color: #1a202c !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Hide sidebar completely */
+    .css-1d391kg {
+        display: none !important;
+    }
+    
+    .css-1cypcdb {
+        display: none !important;
+    }
+    
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    
+    /* Adjust main content to use full width */
+    .main .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -325,31 +375,8 @@ def main():
     # Header
     st.markdown('<div class="main-header">📅 MuniAPMs Task Scheduler</div>', unsafe_allow_html=True)
     
-    # Sidebar for instructions
-    with st.sidebar:
-        st.markdown("### 📋 Instructions")
-        st.markdown("""
-        **How to use this scheduler:**
-        
-        1. **Set Availability**: Select days when team members are unavailable
-        2. **Add Holidays**: Mark company-wide holidays
-        3. **Generate Schedule**: Click to create the weekly schedule
-        4. **Review & Export**: Download CSV files for external use
-        
-        **Team Constraints:**
-        - Zi and Mark cannot do Sizing tasks
-        - Schedule covers Monday-Friday only
-        - Tasks are distributed fairly across the team
-        """)
-        
-        st.markdown("### 👥 Team Members")
-        for person in Config.PEOPLE:
-            st.write(f"• {person}")
-        
-        st.markdown("### 📝 Task Types")
-        for task in Config.TASKS:
-            weight = Config.TASK_WEIGHTS[task]
-            st.write(f"• {task} (Weight: {weight})")
+    # Brief instructions
+    st.markdown('<div class="info-box"><strong>Quick Start:</strong> Set team availability → Mark holidays → Generate schedule → Download CSV files. Note: Zi and Mark cannot do Sizing tasks.</div>', unsafe_allow_html=True)
 
     # Initialize session state
     if 'availability' not in st.session_state:
