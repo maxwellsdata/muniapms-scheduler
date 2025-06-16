@@ -168,11 +168,38 @@ st.markdown("""
         font-size: 16px !important;
     }
     
-    /* Ensure team member names in form sections are highly visible */
+    /* CRITICAL FIX: Ensure team member names are highly visible with bright contrast */
     .stMarkdown strong, strong {
+        color: #00BFFF !important;
+        font-weight: 700 !important;
+        font-size: 18px !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
+    }
+    
+    /* Additional fix for team member name visibility in all contexts */
+    .stMarkdown p strong, p strong {
+        color: #00BFFF !important;
+        font-weight: 700 !important;
+        font-size: 18px !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
+    }
+    
+    /* Ensure metric labels (team member names in stats) are visible */
+    .stMetric label, .stMetric > div > div > div {
         color: #000080 !important;
         font-weight: 700 !important;
         font-size: 16px !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        padding: 2px 4px !important;
+        border-radius: 3px !important;
     }
     
     /* Fix any remaining text visibility issues */
