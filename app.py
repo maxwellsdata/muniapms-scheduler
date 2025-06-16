@@ -45,6 +45,8 @@ st.markdown("""
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 5px;
+        color: #1a365d;
+        font-weight: 500;
     }
     
     .warning-box {
@@ -53,6 +55,8 @@ st.markdown("""
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 5px;
+        color: #742a2a;
+        font-weight: 500;
     }
     
     .success-box {
@@ -61,11 +65,13 @@ st.markdown("""
         padding: 1rem;
         margin: 1rem 0;
         border-radius: 5px;
+        color: #22543d;
+        font-weight: 500;
     }
     
     .stButton > button {
         background: linear-gradient(90deg, #00BFFF 0%, #000080 100%);
-        color: white;
+        color: white !important;
         border: none;
         border-radius: 5px;
         padding: 0.5rem 1rem;
@@ -76,6 +82,7 @@ st.markdown("""
     .stButton > button:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        color: white !important;
     }
     
     .schedule-table {
@@ -112,6 +119,60 @@ st.markdown("""
         border-radius: 10px;
         overflow: hidden;
         border: 2px solid #00BFFF;
+    }
+    
+    /* Ensure all text elements have proper contrast */
+    .stMarkdown, .stText {
+        color: #1a202c !important;
+    }
+    
+    /* Fix multiselect styling for better readability */
+    .stMultiSelect > div > div > div {
+        background-color: white !important;
+        color: #1a202c !important;
+    }
+    
+    .stMultiSelect > div > div > div > div {
+        color: #1a202c !important;
+    }
+    
+    /* Ensure selectbox text is readable */
+    .stSelectbox > div > div > div {
+        background-color: white !important;
+        color: #1a202c !important;
+    }
+    
+    /* Fix any potential white text on white background issues */
+    .stSelectbox label, .stMultiSelect label {
+        color: #1a202c !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Improve sidebar text contrast */
+    .css-1d391kg, .css-1d391kg p {
+        color: #1a202c !important;
+    }
+    
+    /* Ensure all form labels are visible */
+    label {
+        color: #1a202c !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Fix any remaining text visibility issues */
+    .stApp > div > div > div > div {
+        color: #1a202c;
+    }
+    
+    /* Ensure proper contrast for all text elements */
+    p, span, div {
+        color: inherit;
+    }
+    
+    /* Make sure instruction text is clearly visible */
+    .stMarkdown p {
+        color: #1a202c !important;
+        line-height: 1.6;
     }
 </style>
 """, unsafe_allow_html=True)
