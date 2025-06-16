@@ -350,7 +350,7 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown(
-        '<div style="text-align: center; color: #666; padding: 1rem;">© 2024 MuniAPMs Task Scheduler - Optimizing team productivity</div>',
+        '<div style="text-align: center; color: #666; padding: 1rem;">For the Shareholders</div>',
         unsafe_allow_html=True
     )
 
