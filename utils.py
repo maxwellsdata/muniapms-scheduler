@@ -20,7 +20,7 @@ def validate_availability_input(availability_data):
     errors = []
     
     # Check if all required people are present
-    required_people = ["MG", "Anna", "Zi", "Dan", "Max", "Mark"]
+    required_people = ["Grace", "Bouj", "Zi", "Dapper", "Max", "Mark"]
     for person in required_people:
         if person not in availability_data:
             errors.append(f"Missing availability data for {person}")
@@ -98,7 +98,7 @@ def format_schedule_for_export(schedule, format_type="task_view"):
         person_schedule = defaultdict(dict)
         weekdays = ["mon", "tue", "wed", "thu", "fri"]
         weekday_display = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-        people = ["MG", "Anna", "Zi", "Dan", "Max", "Mark"]
+        people = ["Grace", "Bouj", "Zi", "Dapper", "Max", "Mark"]
         
         for day, tasks in schedule.items():
             for task, person in tasks.items():

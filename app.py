@@ -93,12 +93,32 @@ st.markdown("""
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
     }
+    
+    /* Center text in all dataframe tables */
+    .stDataFrame > div > div > div > div > table {
+        text-align: center;
+    }
+    
+    .stDataFrame > div > div > div > div > table td {
+        text-align: center !important;
+    }
+    
+    .stDataFrame > div > div > div > div > table th {
+        text-align: center !important;
+    }
+    
+    /* Additional styling for better table appearance */
+    .stDataFrame {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #00BFFF;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # Configuration class
 class Config:
-    PEOPLE = ["MG", "Anna", "Zi", "Dan", "Max", "Mark"]
+    PEOPLE = ["Grace", "Bouj", "Zi", "Dapper", "Max", "Mark"]
     
     TASKS = [
         "Opti (Urgent and Standard)",
