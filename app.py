@@ -7,7 +7,7 @@ from collections import defaultdict
 import io
 import base64
 
-# Page configuration
+# Page configuration - completely disable sidebar
 st.set_page_config(
     page_title="MuniAPMs Task Scheduler",
     page_icon="📅",
@@ -15,9 +15,27 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for MuniAPMs branding and improved contrast
+# CSS for styling and hiding sidebar
 st.markdown("""
 <style>
+    /* Hide sidebar elements */
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    
+    /* Hide sidebar toggle button */
+    button[title="View sidebar"] {
+        display: none !important;
+    }
+    
+    /* Ensure main content uses full width */
+    .main .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: none !important;
+        width: 100% !important;
+    }
+    
     .main-header {
         background: linear-gradient(90deg, #00BFFF 0%, #000080 100%);
         padding: 1rem;
@@ -49,26 +67,6 @@ st.markdown("""
         font-weight: 500;
     }
     
-    .warning-box {
-        background-color: #fff5f5;
-        border-left: 4px solid #ff6b6b;
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 5px;
-        color: #742a2a !important;
-        font-weight: 500;
-    }
-    
-    .success-box {
-        background-color: #f0fff4;
-        border-left: 4px solid #68d391;
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 5px;
-        color: #22543d !important;
-        font-weight: 500;
-    }
-    
     .stButton > button {
         background: linear-gradient(90deg, #00BFFF 0%, #000080 100%);
         color: white !important;
@@ -76,180 +74,6 @@ st.markdown("""
         border-radius: 5px;
         padding: 0.5rem 1rem;
         font-weight: bold;
-        transition: all 0.3s ease;
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        color: white !important;
-    }
-    
-    .schedule-table {
-        border: 2px solid #00BFFF;
-        border-radius: 10px;
-        overflow: hidden;
-        margin: 1rem 0;
-    }
-    
-    .metric-card {
-        background: white;
-        padding: 1rem;
-        border-radius: 10px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        text-align: center;
-    }
-    
-    /* Center text in all dataframe tables and ensure proper contrast */
-    .stDataFrame > div > div > div > div > table {
-        text-align: center;
-    }
-    
-    .stDataFrame > div > div > div > div > table td {
-        text-align: center !important;
-        color: #1a202c !important;
-        font-weight: 500 !important;
-    }
-    
-    .stDataFrame > div > div > div > div > table th {
-        text-align: center !important;
-        color: #1a202c !important;
-        font-weight: 600 !important;
-        background-color: #f8f9fa !important;
-    }
-    
-    /* Additional styling for better table appearance */
-    .stDataFrame {
-        border-radius: 10px;
-        overflow: hidden;
-        border: 2px solid #00BFFF;
-    }
-    
-    /* CRITICAL: Fix team member name visibility in tables */
-    .stDataFrame table tbody tr td {
-        color: #1a202c !important;
-        font-weight: 600 !important;
-        background-color: white !important;
-    }
-    
-    .stDataFrame table thead tr th {
-        color: #1a202c !important;
-        font-weight: 700 !important;
-        background-color: #f8f9fa !important;
-    }
-    
-    /* Ensure all text elements have proper contrast */
-    .stMarkdown, .stText, p, span, div {
-        color: #1a202c !important;
-    }
-    
-    /* Fix multiselect styling for better readability */
-    .stMultiSelect > div > div > div {
-        background-color: white !important;
-        color: #1a202c !important;
-    }
-    
-    .stMultiSelect > div > div > div > div {
-        color: #1a202c !important;
-        font-weight: 500 !important;
-    }
-    
-    /* Ensure selectbox text is readable */
-    .stSelectbox > div > div > div {
-        background-color: white !important;
-        color: #1a202c !important;
-    }
-    
-    /* Fix form labels and ensure high contrast */
-    .stSelectbox label, .stMultiSelect label, label {
-        color: #1a202c !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
-    }
-    
-    /* CRITICAL FIX: Ensure team member names are highly visible with bright contrast */
-    .stMarkdown strong, strong {
-        color: #00BFFF !important;
-        font-weight: 700 !important;
-        font-size: 18px !important;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        padding: 2px 6px !important;
-        border-radius: 4px !important;
-        display: inline-block !important;
-    }
-    
-    /* Additional fix for team member name visibility in all contexts */
-    .stMarkdown p strong, p strong {
-        color: #00BFFF !important;
-        font-weight: 700 !important;
-        font-size: 18px !important;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) !important;
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        padding: 2px 6px !important;
-        border-radius: 4px !important;
-        display: inline-block !important;
-    }
-    
-    /* Ensure metric labels (team member names in stats) are visible */
-    .stMetric label, .stMetric > div > div > div {
-        color: #000080 !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        padding: 2px 4px !important;
-        border-radius: 3px !important;
-    }
-    
-    /* Fix any remaining text visibility issues */
-    .stApp > div > div > div > div {
-        color: #1a202c !important;
-    }
-    
-    /* Make sure instruction text is clearly visible */
-    .stMarkdown p {
-        color: #1a202c !important;
-        line-height: 1.6;
-        font-weight: 500 !important;
-    }
-    
-    /* Ensure metric labels are visible */
-    .metric-container label {
-        color: #1a202c !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Fix tab text visibility */
-    .stTabs [data-baseweb="tab-list"] button {
-        color: #1a202c !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Ensure download button text is visible */
-    .stDownloadButton > button {
-        color: #1a202c !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Hide sidebar completely */
-    .css-1d391kg {
-        display: none !important;
-    }
-    
-    .css-1cypcdb {
-        display: none !important;
-    }
-    
-    section[data-testid="stSidebar"] {
-        display: none !important;
-    }
-    
-    /* Adjust main content to use full width */
-    .main .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-        max-width: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -391,13 +215,6 @@ def create_schedule_dataframes(schedule):
     
     return task_df, person_df
 
-def create_csv_download(df, filename):
-    """Create a CSV download link"""
-    csv = df.to_csv()
-    b64 = base64.b64encode(csv.encode()).decode()
-    href = f'<a href="data:file/csv;base64,{b64}" download="{filename}">Download {filename}</a>'
-    return href
-
 def main():
     # Header
     st.markdown('<div class="main-header">📅 MuniAPMs Task Scheduler</div>', unsafe_allow_html=True)
@@ -423,7 +240,8 @@ def main():
         
         availability = {}
         for person in Config.PEOPLE:
-            st.write(f"**{person}** - Days unavailable:")
+            # FIXED: Use HTML with inline styles for maximum visibility of team member names
+            st.markdown(f'<div style="color: #FFFFFF; background-color: #000080; padding: 8px 12px; border-radius: 6px; font-weight: 800; font-size: 18px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); border: 2px solid #00BFFF; margin: 4px 0; display: block;"><strong>{person}</strong> - Days unavailable:</div>', unsafe_allow_html=True)
             unavailable_days = st.multiselect(
                 f"Select unavailable days for {person}",
                 Config.WEEKDAY_DISPLAY,
