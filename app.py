@@ -22,12 +22,12 @@ st.markdown("""
     section[data-testid="stSidebar"] {
         display: none !important;
     }
-    
+
     /* Hide sidebar toggle button */
     button[title="View sidebar"] {
         display: none !important;
     }
-    
+
     /* Ensure main content uses full width */
     .main .block-container {
         padding-left: 1rem !important;
@@ -35,45 +35,75 @@ st.markdown("""
         max-width: none !important;
         width: 100% !important;
     }
-    
+
+    /* Main Header */
     .main-header {
-        background: linear-gradient(90deg, #00BFFF 0%, #000080 100%);
-        padding: 1rem;
+        background: linear-gradient(90deg, #1f4a7c 0%, #0a1f3c 100%); /* Deep blue gradient */
+        padding: 1.5rem;
         border-radius: 10px;
         margin-bottom: 2rem;
         text-align: center;
-        color: white;
-        font-size: 2rem;
+        color: #f0f2f6; /* Off-white for readability */
+        font-size: 2.2rem;
         font-weight: bold;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
-    
+
+    /* Section Headers */
     .section-header {
-        background-color: #00BFFF;
+        background-color: #3b7bbf; /* Muted blue */
         color: white;
-        padding: 0.5rem 1rem;
+        padding: 0.7rem 1.2rem;
         border-radius: 5px;
-        margin: 1rem 0;
+        margin: 1.5rem 0 1rem 0;
         font-weight: bold;
+        font-size: 1.2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    
+
+    /* Info Boxes */
     .info-box {
-        background-color: #f0f8ff;
-        border-left: 4px solid #00BFFF;
-        padding: 1rem;
+        background-color: #e6f2ff; /* Very light blue */
+        border-left: 5px solid #3b7bbf; /* Muted blue for accent */
+        padding: 1rem 1.2rem;
         margin: 1rem 0;
         border-radius: 5px;
-        color: #1a365d !important;
+        color: #2c3e50 !important; /* Darker text for contrast */
         font-weight: 500;
+        line-height: 1.5;
     }
-    
+
+    /* Buttons */
     .stButton > button {
-        background: linear-gradient(90deg, #00BFFF 0%, #000080 100%);
+        background: linear-gradient(90deg, #3b7bbf 0%, #1f4a7c 100%); /* Muted blue to deep blue gradient */
         color: white !important;
         border: none;
         border-radius: 5px;
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1.5rem;
         font-weight: bold;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .stButton > button:hover {
+        background: linear-gradient(90deg, #1f4a7c 0%, #3b7bbf 100%); /* Reverse on hover */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+    /* Specific styling for team member names */
+    .team-member-name {
+        color: #ffffff; /* White text */
+        background-color: #4a7d9b; /* A more subdued, professional blue */
+        padding: 10px 15px;
+        border-radius: 7px;
+        font-weight: 700; /* Slightly bolder */
+        font-size: 1.1rem; /* Slightly larger */
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+        border: 1px solid #3a6b84; /* Slightly darker border for depth */
+        margin: 8px 0;
+        display: block;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -81,15 +111,15 @@ st.markdown("""
 # Configuration class
 class Config:
     PEOPLE = ["Grace", "Bouj", "Zi", "Dapper", "Max", "Mark"]
-    
+
     TASKS = [
         "Opti (Urgent and Standard)",
-        "Sizing", 
+        "Sizing",
         "1st & 2nd File, 2nd round raises",
         "Algo sales, Review 2nd round raises",
         "Review AM Raises, 3rd file"
     ]
-    
+
     TASK_WEIGHTS = {
         "Opti (Urgent and Standard)": 3,
         "Sizing": 2,
@@ -97,9 +127,9 @@ class Config:
         "Algo sales, Review 2nd round raises": 2,
         "Review AM Raises, 3rd file": 2
     }
-    
+
     NO_SIZING = ["Zi", "Mark"]
-    
+
     DAY_MAPPING = {
         'monday': 'mon', 'mon': 'mon', 'm': 'mon',
         'tuesday': 'tue', 'tue': 'tue', 'tu': 'tue', 't': 'tue',
@@ -107,7 +137,7 @@ class Config:
         'thursday': 'thu', 'thu': 'thu', 'th': 'thu', 'r': 'thu',
         'friday': 'fri', 'fri': 'fri', 'f': 'fri'
     }
-    
+
     WEEKDAYS = ["mon", "tue", "wed", "thu", "fri"]
     WEEKDAY_DISPLAY = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
@@ -120,7 +150,7 @@ class TaskScheduler:
         self.no_sizing = Config.NO_SIZING
         self.weekdays = Config.WEEKDAYS
         self.weekday_display = Config.WEEKDAY_DISPLAY
-        
+
     def is_valid_assignment(self, person, task, day, availability):
         """Check if a person can be assigned a task on a given day"""
         if day in availability.get(person, []):
@@ -128,35 +158,35 @@ class TaskScheduler:
         if task == "Sizing" and person in self.no_sizing:
             return False
         return True
-    
+
     def generate_schedule(self, availability, holidays):
         """Generate the task schedule based on availability and holidays"""
         schedule = {}
         person_tasks = defaultdict(lambda: defaultdict(list))
         person_task_count = defaultdict(lambda: defaultdict(int))
         daily_task_count = defaultdict(lambda: defaultdict(int))
-        
+
         for day in self.weekdays:
             schedule[day] = {}
-            
+
             if day in holidays:
                 for task in self.tasks:
                     schedule[day][task] = "🏝️ Holiday"
                 continue
-            
+
             for task in self.tasks:
                 eligible_people = [
                     person for person in self.people
                     if self.is_valid_assignment(person, task, day, availability)
                 ]
-                
+
                 if not eligible_people:
                     schedule[day][task] = "❌ No one available"
                     continue
-                
+
                 # Priority 1: People with 0 tasks today
                 zero_task_people = [p for p in eligible_people if daily_task_count[day][p] == 0]
-                
+
                 if zero_task_people:
                     # Among zero-task people, prefer those who haven't done this task
                     never_done_task = [p for p in zero_task_people if person_task_count[p][task] == 0]
@@ -174,12 +204,12 @@ class TaskScheduler:
                         min_tasks = min(daily_task_count[day][p] for p in eligible_people)
                         least_loaded = [p for p in eligible_people if daily_task_count[day][p] == min_tasks]
                         chosen = random.choice(least_loaded)
-                
+
                 schedule[day][task] = chosen
                 person_tasks[chosen][day].append(task)
                 person_task_count[chosen][task] += 1
                 daily_task_count[day][chosen] += 1
-        
+
         return schedule, person_tasks
 
 def create_schedule_dataframes(schedule):
@@ -187,7 +217,7 @@ def create_schedule_dataframes(schedule):
     # Task-by-day view
     task_df = pd.DataFrame(schedule).T
     task_df.index.name = "Day"
-    
+
     # Person-by-day view
     person_schedule = defaultdict(dict)
     for day, tasks in schedule.items():
@@ -197,7 +227,7 @@ def create_schedule_dataframes(schedule):
                     person_schedule[person] = {d: [] for d in Config.WEEKDAY_DISPLAY}
                 day_display = Config.WEEKDAY_DISPLAY[Config.WEEKDAYS.index(day)]
                 person_schedule[person][day_display].append(task)
-    
+
     # Convert to DataFrame
     person_data = {}
     for person in Config.PEOPLE:
@@ -209,16 +239,16 @@ def create_schedule_dataframes(schedule):
                 person_data[person][day_display] = "; ".join(tasks) if tasks else "😎"
             else:
                 person_data[person][day_display] = "😎"
-    
+
     person_df = pd.DataFrame(person_data).T
     person_df.index.name = "Person"
-    
+
     return task_df, person_df
 
 def main():
     # Header
     st.markdown('<div class="main-header">📅 MuniAPMs Task Scheduler</div>', unsafe_allow_html=True)
-    
+
     # Brief instructions
     st.markdown('<div class="info-box"><strong>Quick Start:</strong> Set team availability → Mark holidays → Generate schedule → Download CSV files. Note: Zi and Mark cannot do Sizing tasks.</div>', unsafe_allow_html=True)
 
@@ -232,16 +262,16 @@ def main():
 
     # Main content
     col1, col2 = st.columns([1, 1])
-    
+
     with col1:
         st.markdown('<div class="section-header">👥 Team Availability</div>', unsafe_allow_html=True)
-        
+
         st.markdown('<div class="info-box">Select the days when each team member is <strong>unavailable</strong> (days off, vacation, etc.)</div>', unsafe_allow_html=True)
-        
+
         availability = {}
         for person in Config.PEOPLE:
-            # FIXED: Use HTML with inline styles for maximum visibility of team member names
-            st.markdown(f'<div style="color: #FFFFFF; background-color: #000080; padding: 8px 12px; border-radius: 6px; font-weight: 800; font-size: 18px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); border: 2px solid #00BFFF; margin: 4px 0; display: block;"><strong>{person}</strong> - Days unavailable:</div>', unsafe_allow_html=True)
+            # Applying the new CSS class for team member names
+            st.markdown(f'<div class="team-member-name">{person} - Days unavailable:</div>', unsafe_allow_html=True)
             unavailable_days = st.multiselect(
                 f"Select unavailable days for {person}",
                 Config.WEEKDAY_DISPLAY,
@@ -250,14 +280,14 @@ def main():
             )
             # Convert to internal format
             availability[person] = [Config.WEEKDAYS[Config.WEEKDAY_DISPLAY.index(day)] for day in unavailable_days]
-        
+
         st.session_state.availability = availability
-    
+
     with col2:
         st.markdown('<div class="section-header">🏝️ Company Holidays</div>', unsafe_allow_html=True)
-        
+
         st.markdown('<div class="info-box">Select days when the entire company is closed (holidays, company events, etc.)</div>', unsafe_allow_html=True)
-        
+
         holidays = st.multiselect(
             "Select company-wide holidays",
             Config.WEEKDAY_DISPLAY,
@@ -265,7 +295,7 @@ def main():
         )
         # Convert to internal format
         st.session_state.holidays = [Config.WEEKDAYS[Config.WEEKDAY_DISPLAY.index(day)] for day in holidays]
-    
+
     # Generate schedule button
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -273,29 +303,29 @@ def main():
         if st.button("🚀 Generate Weekly Schedule", use_container_width=True):
             scheduler = TaskScheduler()
             schedule, person_tasks = scheduler.generate_schedule(
-                st.session_state.availability, 
+                st.session_state.availability,
                 st.session_state.holidays
             )
             st.session_state.schedule = schedule
             st.session_state.person_tasks = person_tasks
             st.session_state.schedule_generated = True
             st.success("✅ Schedule generated successfully!")
-    
+
     # Display schedule if generated
     if st.session_state.schedule_generated and 'schedule' in st.session_state:
         st.markdown("---")
         st.markdown('<div class="section-header">📊 Generated Schedule</div>', unsafe_allow_html=True)
-        
+
         # Create DataFrames
         task_df, person_df = create_schedule_dataframes(st.session_state.schedule)
-        
+
         # Display tabs for different views
         tab1, tab2, tab3 = st.tabs(["📋 Task Assignment View", "👤 Individual View", "📈 Statistics"])
-        
+
         with tab1:
             st.markdown("**Task-by-Day Schedule** - Shows who is assigned to each task each day")
             st.dataframe(task_df, use_container_width=True)
-            
+
             # Download button
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             csv_task = task_df.to_csv()
@@ -305,11 +335,11 @@ def main():
                 file_name=f"MuniAPMs_Task_Schedule_{timestamp}.csv",
                 mime="text/csv"
             )
-        
+
         with tab2:
             st.markdown("**Person-by-Day Schedule** - Shows what each person is doing each day")
             st.dataframe(person_df, use_container_width=True)
-            
+
             # Download button
             csv_person = person_df.to_csv()
             st.download_button(
@@ -318,35 +348,35 @@ def main():
                 file_name=f"MuniAPMs_Individual_Schedule_{timestamp}.csv",
                 mime="text/csv"
             )
-        
+
         with tab3:
             st.markdown("**Workload Distribution Statistics**")
-            
+
             # Calculate statistics
             task_counts = defaultdict(int)
             person_task_counts = defaultdict(int)
-            
+
             for day, tasks in st.session_state.schedule.items():
                 for task, person in tasks.items():
                     if person not in ["🏝️ Holiday", "❌ No one available"]:
                         task_counts[task] += 1
                         person_task_counts[person] += 1
-            
+
             # Display metrics
             col1, col2 = st.columns(2)
-            
+
             with col1:
                 st.markdown("**Tasks per Person**")
                 for person in Config.PEOPLE:
                     count = person_task_counts[person]
                     st.metric(person, count)
-            
+
             with col2:
                 st.markdown("**Task Distribution**")
                 for task in Config.TASKS:
                     count = task_counts[task]
                     st.metric(task.split()[0], count)  # Shortened task name
-    
+
     # Footer
     st.markdown("---")
     st.markdown(
